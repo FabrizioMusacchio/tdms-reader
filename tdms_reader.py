@@ -84,7 +84,7 @@ for tdms_filename_i, tdms_filename in enumerate(tdms_files):
                 plt.savefig(os.path.join(analysis_folder, plot_filename), transparent=True)
                 plt.close()
 
-        print(f"Processed {tdms_filename_i}/{len(tdms_files)}: {tdms_filename}")
+        print(f"Processed {tdms_filename_i+1}/{len(tdms_files)}: {tdms_filename}")
 
     except Exception as e:
         print(f"Error processing {tdms_filename}: {e}")
