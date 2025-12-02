@@ -30,9 +30,13 @@ input_folder    = os.path.join(ROOT_PATH, "Data")
 analysis_folder = os.path.join(ROOT_PATH, "Analysis")
 table_folder    = os.path.join(analysis_folder, "excel")
 
+# save to excel? (True/False):
+save_to_excel = False
+
 # create output directories if they don't exist:
 os.makedirs(analysis_folder, exist_ok=True)
-os.makedirs(table_folder, exist_ok=True)
+if save_to_excel:
+    os.makedirs(table_folder, exist_ok=True)
 # %% MAIN
 # Get all TDMS files (ignore index files and hidden files):
 tdms_files = [f for f in os.listdir(input_folder) 
@@ -53,32 +57,37 @@ for tdms_filename_i, tdms_filename in enumerate(tdms_files):
                 # channel = group.channels()[0]
                 data = channel[:]
                 
+                print(f"   Processing Group: {group.name}, Channel: {channel.name}")
+                
                 # attempt to get timestamps:
                 try:
                     timestamps = channel.time_track()
                 except KeyError:
                     timestamps = None  # No time track available
 
-                # convert to DataFrame:
-                df = pd.DataFrame({"Time": timestamps, "Value": data} if timestamps is not None else {"Value": data})
-                
-                # save CSV file:
-                csv_filename = f"{tdms_filename}_{group.name}_{channel.name}.csv"
-                # replace "/" with "_" in the filename:
-                csv_filename = csv_filename.replace("/", "_")
-                df.to_csv(os.path.join(table_folder, csv_filename), index=False)
+                # convert to DataFrame and save CSV file (if enabled):
+                if save_to_excel:
+                    df = pd.DataFrame({"Time": timestamps, "Value": data} if timestamps is not None else {"Value": data})
+                    
+                    # save CSV file:
+                    csv_filename = f"{tdms_filename}_{group.name}_{channel.name}.csv"
+                    # replace "/" with "_" in the filename:
+                    csv_filename = csv_filename.replace("/", "_")
+                    df.to_csv(os.path.join(table_folder, csv_filename), index=False)
 
                 # plot data:
                 plt.figure(figsize=(10, 5))
                 plt.plot(timestamps, data, label=f"{group.name} - {channel.name}" if timestamps is not None else "Data")
                 plt.xlabel("Time" if timestamps is not None else "Index")
                 plt.ylabel("Value")
-                plt.title(f"{tdms_filename} - {group.name} - {channel.name}")
+                # Remove .tdms extension from filename for display
+                display_name = tdms_filename.replace(".tdms", "")
+                plt.title(f"{display_name} - {group.name} - {channel.name}")
                 plt.legend(loc="lower right")
                 plt.grid()
 
                 # save plot:
-                plot_filename = f"{tdms_filename}_{group.name}_{channel.name}.pdf"
+                plot_filename = f"{display_name}_{group.name}_{channel.name}.pdf"
                 # replace "/" with "_" in the filename:
                 plot_filename = plot_filename.replace("/", "_")
                 plt.savefig(os.path.join(analysis_folder, plot_filename), transparent=True)
