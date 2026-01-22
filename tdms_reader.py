@@ -25,14 +25,15 @@ plt.rcParams["axes.spines.left"]   = False
 plt.rcParams["axes.spines.right"]  = False
 # %% DEFINE PATHS
 # set paths:
-ROOT_PATH = "/Volumes/.../"
-input_folder    = os.path.join(ROOT_PATH, "Data")
-analysis_folder = os.path.join(ROOT_PATH, "Analysis")
-table_folder    = os.path.join(analysis_folder, "excel")
+ROOT_PATH = "/Volumes/.../"   # MODIFY THIS PATH
+input_folder    = os.path.join(ROOT_PATH, "Data")  # AND MODIFY THIS PATH
 
 # save to excel? (True/False):
 save_to_excel = False
 
+# DO NOT MODIFY BELOW THIS LINE
+analysis_folder = os.path.join(ROOT_PATH, "Analysis")
+table_folder    = os.path.join(analysis_folder, "excel")
 # create output directories if they don't exist:
 os.makedirs(analysis_folder, exist_ok=True)
 if save_to_excel:
